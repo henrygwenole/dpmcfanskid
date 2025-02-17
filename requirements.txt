@@ -1,3 +1,4 @@
-python3 -m venv .venv        # Create a virtual environment (if you haven't already)
-source .venv/bin/activate   # Activate it (Linux/macOS)
-.venv\Scripts\activate      # Activate it (Windows)
+dash==2.9.3
+pandas==2.0.3
+plotly==5.14.0
+streamlit==1.25.0
