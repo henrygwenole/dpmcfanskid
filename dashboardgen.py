@@ -1,53 +1,47 @@
-%%writefile dashboardgen.py
 import streamlit as st
 import pandas as pd
-import random
-import datetime
-import plotly.graph_objs as go
+import plost  # If you're using it
+import plotly.graph_objects as go # If you are using it
 
-def generate_fake_data():
-    time = [datetime.datetime.now() - datetime.timedelta(seconds=i) for i in range(50)]
-    motor_de_temp = [random.uniform(60, 80) for _ in range(50)]
-    motor_de_bpfo = [random.uniform(0.1, 0.5) for _ in range(50)]
+# Page configuration (layout)
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-    df = pd.DataFrame({
-        'Time': time,
-        'Motor DETemp': motor_de_temp,
-        'Motor DE BPFO': motor_de_bpfo,
-    })
-    return df
+# Load external CSS
+with open('style.css', 'r') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-def get_overall_condition(measurements, thresholds):
-    for measurement, threshold in zip(measurements, thresholds):
-        if measurement > threshold:
-            return 'orange'  # Or 'red' depending on your logic
-    return 'green'  # If all measurements are within thresholds
+# Sidebar
+st.sidebar.header('Your Dashboard Title')  # Your title
 
-st.title("Live Maintenance Dashboard")
+st.sidebar.subheader('Parameter 1')  # Your parameters
+param1 = st.sidebar.selectbox('Select an option', ('Option A', 'Option B'))
 
-data = generate_fake_data()
-motor_condition = get_overall_condition([data.iloc[-1]['Motor DETemp'], data.iloc[-1]['Motor DE BPFO']], [85, 0.8])
+st.sidebar.subheader('Parameter 2')
+param2 = st.sidebar.slider('Select a value', 0, 100, 50)
 
-st.header("Status")
+# Main content
+st.title('Your Main Dashboard Title')  # Your dashboard title
+
+# Row 1 (Example with Plotly)
 col1, col2 = st.columns(2)
-
 with col1:
-    st.subheader("Motor")
-    st.write(f"Overall Condition: {motor_condition.upper()}")
+    st.subheader('Chart 1')
+    # Your Plotly chart code here (example)
+    fig = go.Figure(data=[go.Bar(y=[2, 3, 1])])  # Replace with your chart
+    st.plotly_chart(fig)
 
-st.header("Graphs")
+with col2:
+    st.subheader('Chart 2')
+    # Your other charts or content here
 
-motor_de_temp_graph = go.Figure(
-    data=[go.Scatter(x=data['Time'], y=data['Motor DETemp'], mode='lines')],
-    layout=go.Layout(title="Motor DE Temperature")
-)
-st.plotly_chart(motor_de_temp_graph)
+# Row 2 (Example with Pandas DataFrame)
+st.subheader('Data Table')
+try:
+    df = pd.read_csv("your_data.csv") # Replace with your data source
+    st.dataframe(df)
+except FileNotFoundError:
+    st.error("Data file not found. Please upload the file.")
+except Exception as e:
+    st.error(f"An error occurred: {e}")
 
-motor_de_bpfo_graph = go.Figure(
-    data=[go.Scatter(x=data['Time'], y=data['Motor DE BPFO'], mode='lines')],
-    layout=go.Layout(title="Motor DE BPFO")
-)
-st.plotly_chart(motor_de_bpfo_graph)
-
-if st.button("Refresh Data"):
-    st.experimental_rerun()
+# ... more rows as needed ...
