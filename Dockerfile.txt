@@ -1,6 +1,9 @@
-FROM python:3.12-slim-bullseye  # Or a suitable base image
+FROM python:3.12-slim-bullseye # Or your preferred base image
 
-# Install system dependencies
+# Upgrade pip (Important: Do this BEFORE installing project requirements)
+RUN pip install --upgrade pip
+
+# Install system dependencies (if any, like zlib for Pillow)
 RUN apt-get update && apt-get install -y \
     libz-dev \
     zlib1g-dev
